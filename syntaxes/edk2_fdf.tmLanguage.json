@@ -33,12 +33,16 @@
           "match": "((?<!\\w)(SECTION|GUIDED|VERSION|UI|FV_IMAGE|COMPAT16|PE32|PIC|TE|RAW|DXE_DEPEX|SMM|DEPEX|PEI_DEPEX))(?!\\w)"
         },
         {
+          "name": "support.type.edk2_fdf",
+          "match": "((?<!\\w)(APRIORI|DXE))(?!\\w)"
+        },
+        {
           "name": "variable.parameter.edk2_fdf",
           "match": "[\\w/-]+\\.[\\w]+"
         },
         {
           "name": "keyword.control.edk2_fdf",
-          "match": "((?<!\\w)DEFINE)(?!\\w)|(?<=!)(ifdef|ifndef|if|endif|include|else)"
+          "match": "((?<!\\w)DEFINE)(?!\\w)|!(ifdef|ifndef|if|endif|include|else)"
         },
         {
           "name": "constant.numeric.edk2_fdf",
@@ -58,14 +62,8 @@
           "end": "\""
         },
         {
-          "begin": "\\[",
-          "end": "\\]",
-          "patterns": [
-            {
-              "name": "string.quoted.double.edk2_fdf",
-              "match": "[a-zA-Z0-9.]+"
-            }
-          ]
+          "name": "string.quoted.double.edk2_fdf",
+          "match": "\\[[a-zA-Z0-9.]+\\]"
         },
         {
           "name": "string.quoted.double.edk2_fdf",

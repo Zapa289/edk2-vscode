@@ -2,32 +2,19 @@
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
   "name": "source.edk2_dsc",
   "patterns": [
-    {
-      "include": "#edk2_dsc_color"
-    }
+    { "include": "#library-group"},
+    { "include": "#pcd-group"},
+    { "include": "#defines-group"},
+    { "include": "#edk2_dsc_color"},
+    { "include": "#comment"}
   ],
   "repository": {
     "edk2_dsc_color": {
       "patterns": [
-        {
-          "name": "variable.language.edk2_dsc",
-          "match": "((?<!\\w)(DSC_SPECIFICATION|PLATFORM_GUID|PLATFORM_VERSION|PLATFORM_NAME|SKUID_IDENTIFIER|SUPPORTED_ARCHITECTURES|BUILD_TARGETS))(?!\\w)"
-        },
-        {
-          "name": "variable.language.edk2_dsc",
-          "match": "((?<!\\w)(OUTPUT_DIRECTORY|FLASH_DEFINITION|BUILD_NUMBER|FIX_LOAD_TOP_MEMORY_ADDRESS|TIME_STAMP_FILE|DEFINE|RFC_LANGUAGES|ISO_LANGUAGES|VPD_TOOL_GUID|PCD_INFO_GENERATION|PREBUILD|POSTBUILD))(?!\\w)"
-        },
-        {
-          "name": "variable.parameter.edk2_dsc",
-          "match": "[\\w/-]+\\.inf"
-        },
+        {"include": "#string"}, {"include": "#evaluate"}, {"include": "#file-path"},
         {
           "name": "keyword.control.edk2_dsc",
-          "match": "(?<=!)(ifdef|ifndef|if|endif|include|else)"
-        },
-        {
-          "name": "constant.numeric.edk2_dsc",
-          "match": "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+          "match": "!(ifdef|ifndef|if|endif|include|else)"
         },
         {
           "name": "constant.numeric.edk2_dsc",
@@ -42,34 +29,133 @@
           "match": "((?<!\\w)TRUE|FALSE|NULL)(?!\\w)"
         },
         {
-          "name": "string.quoted.double.edk2_dsc",
-          "begin": "L\"|\"",
-          "end": "\""
+          "name": "keyword.operator.edk2_dsc",
+          "match": "((?<!\\w)TEST)(?!\\w)"
+        }
+      ]
+    },
+    "comment":{
+      "name": "comment.line.number-sign.edk2_dsc",
+      "begin": "#",
+      "end": "\n"
+    },
+    "evaluate": {
+      "name": "support.function.builtin.edk2_dsc",
+      "match": "\\$\\([a-zA-Z0-9_]+\\)"
+    },
+    "guid": {
+      "patterns": [
+        {
+          "name": "guid.group",
+          "begin": "GUID\\(",
+          "end": "\\)",
+          "captures": {
+            "0" : {"name": "support.type.edk2_dsc"}
+          },
+          "patterns": [
+            {"include": "#evaluate"}, {"include": "#string"}
+          ]
         },
         {
-          "begin": "\\[",
-          "end": "\\]",
+          "name": "constant.numeric.edk2.guid",
+          "match": "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+        }
+      ]
+    },
+    "string": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.edk2_dsc",
+          "begin": "L\"|\"",
+          "end": "\"",
           "patterns": [
             {
-              "name": "string.quoted.double.edk2_dsc",
-              "match": "[a-zA-Z0-9.]+"
+              "include": "#evaluate"
             }
           ]
         },
         {
-          "name": "string.quoted.double.edk2_dsc",
-          "match": "(?<=<)[a-zA-Z0-9.]+(?=>)"
-        },
-        {
-          "name": "support.function.edk2_dsc",
-          "match": "(?<=\\$\\()[a-zA-Z0-9_]+(?=\\))"
-        },
-        {
-          "name": "comment.line.number-sign.edk2_dsc",
-          "begin": "#",
-          "end": "\n"
+          "name": "string.quoted.single.edk2_dsc",
+          "begin": "L'|'",
+          "end": "'",
+          "patterns": [
+            {
+              "include": "#evaluate"
+            }
+          ]
         }
       ]
+    },
+    "defines-group":{
+      "name": "edk2_dsc.def.group",
+      "begin": "^\\[Defines\\]",
+      "end": "^\\s*(?=(\\[|<|!))",
+      "beginCaptures": {
+        "0": {"name" : "support.class.edk2_dsc"}
+      },
+      "patterns": [
+        {"include": "#control-words"}, {"include": "#pipe"}, {"include": "#comment"},
+        {
+          "match": "(\\s*DEFINE\\s*)([\\w_]+)\\b",
+          "captures": {
+            "1" : {},
+            "2" : {"name" : "support.variable.edk2_dsc.def"}
+          }
+        }
+      ]
+    },
+    "library-group":{
+      "name": "edk2_dsc.lib.group",
+      "begin": "[\\[|<]Library[a-zA-Z0-9., _]+[\\]|>]",
+      "end": "^\\s*(?=(\\[|<))",
+      "beginCaptures": {
+        "0": {"name" : "support.class.edk2_dsc"}
+      },
+      "patterns": [
+        {"include": "#file-path"}, {"include": "#pipe"}, {"include": "#comment"},
+        {
+          "name": "support.function.edk2_dsc.lib",
+          "match": "\\w+(?=\\|)"
+        }
+      ]
+    },
+    "pcd-group":{
+      "name": "edk2_dsc.pcd.group",
+      "begin": "\\[Pcd[a-zA-Z0-9., _]+\\]",
+      "end": "^\\s*(?=[\\[|<])",
+      "beginCaptures": {
+        "0": {"name" : "support.class.edk2_dsc"}
+      },
+      "patterns": [
+        {"include": "#pipe"}, { "include": "#pcd-def"}, {"include": "#comment"},
+        {
+          "name": "variable.language.edk2_dsc.pcd.guid",
+          "match": "(?<=\\s)\\w+(?=\\.)"
+        }
+      ]
+    },
+    "pcd-def":{
+      "name":"support.variable.edk2_dsc.pcd",
+      "match": "(?<=\\.)\\w+",
+      "patterns": [
+        {"include": "#pcd-def"}
+      ]
+    },
+    "file-path":{
+      "patterns": [
+        {
+          "name": "support.variable.edk2_dsc.inf_path",
+          "match": "[-\\w/\\.]+?(\\.(inf|dsc|inc|fdf))+"
+        }
+      ]
+    },
+    "pipe":{
+      "name": "keyword.control.edk2_dsc.pipe",
+      "match": "\\|"
+    },
+    "control-words":{
+      "name": "keyword.edk2_dsc",
+      "match": "((?<!\\w)(DSC_SPECIFICATION|PLATFORM_GUID|PLATFORM_VERSION|PLATFORM_NAME|SKUID_IDENTIFIER|SUPPORTED_ARCHITECTURES|BUILD_TARGETS|OUTPUT_DIRECTORY|FLASH_DEFINITION|BUILD_NUMBER|FIX_LOAD_TOP_MEMORY_ADDRESS|TIME_STAMP_FILE|DEFINE|RFC_LANGUAGES|ISO_LANGUAGES|VPD_TOOL_GUID|PCD_INFO_GENERATION|PREBUILD|POSTBUILD))(?!\\w)"
     }
   },
   "scopeName": "source.edk2_dsc"
