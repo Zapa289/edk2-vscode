@@ -1,5 +1,7 @@
-# edk2-vscode
-edk2-vscode is a plugin of vscode for supporting edk2 files association.
+# edk2
+Fork of EDK2 syntax highlighter from WalonLi (https://github.com/WalonLi/edk2-vscode)
+
+edk2 is a plugin of vscode for supporting edk2 files association.
 
 ## Syntax Highlight
 * DEC/DSC/FDF/INF/UNI/VFR
@@ -43,7 +45,7 @@ Functions       |How
 ![](demo/build_setting.jpg)
 
 ## Known Issue
-1. Trigger git blame for each line with gitlens plugin. Suggest to disable two functions in gitlens 
+1. Trigger git blame for each line with gitlens plugin. Suggest to disable two functions in gitlens
   `"gitlens.codeLens.authors.enabled": false` and `"gitlens.codeLens.recentChange.enabled": false'`
 
 ```

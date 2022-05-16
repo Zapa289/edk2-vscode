@@ -45,9 +45,9 @@ class Common {
 
   static getRootPath (): string[] {
     if (vscode.workspace.workspaceFolders) {
-      let config = vscode.workspace.getConfiguration('edk2-vscode');
+      let config = vscode.workspace.getConfiguration('edk2');
       let folder: string[] = [vscode.workspace.workspaceFolders[0].uri.fsPath];
-      
+
       if (config.has('root.extend.path')) {
         let s: string = config.get('root.extend.path') + '';
         s.replace(/\s/g, '').split(',').forEach(function(v) {
@@ -61,7 +61,7 @@ class Common {
 
   static buildDsc (...args: any[]) {
     let os = require('os');
-    let config = vscode.workspace.getConfiguration('edk2-vscode');
+    let config = vscode.workspace.getConfiguration('edk2');
     let parameter = ' -p ' +
                     args[0].path.substring((os.platform() === 'win32' ? 1 : 0)) +   // windows: \d:\xxxxx ; linux /home/xxxxx
                     ' -t ' +
@@ -80,7 +80,7 @@ class Common {
   static goToBuild (...args: any[]) {
     let openExplorer = require('open-file-explorer');
     let os = require('os');
-    let config = vscode.workspace.getConfiguration('edk2-vscode');
+    let config = vscode.workspace.getConfiguration('edk2');
 
     if (vscode.workspace.workspaceFolders) {
       let inf = args[0].path.substring((os.platform() === 'win32' ? 1 : 0) + vscode.workspace.workspaceFolders[0].uri.fsPath.length).replace(/.inf$/g, '');
@@ -165,7 +165,7 @@ class Edk2DecDefinitionProvider implements vscode.DefinitionProvider {
   provideDefinition(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken): vscode.ProviderResult<vscode.Definition> {
     // check destination file.
     let dest = document.lineAt(position).text.replace(/#.*/g, '')   // comments
-                       .replace(/^\s*/g, '')                        // front blank  
+                       .replace(/^\s*/g, '')                        // front blank
                        .replace(/[\s\{\}]*$/g, '')                  // tail "{", "}"" and blank
                        .replace(/[\w\s]+\|/g, '');                  // front "|" and blank
     if (!dest.substring(dest.length - 2).match('.h')) {
@@ -195,7 +195,7 @@ class Edk2DecDefinitionProvider implements vscode.DefinitionProvider {
       }
     }
 
-    
+
     for (let iterator of directory) {
       if (fs.existsSync(iterator)) {
         return new vscode.Location(vscode.Uri.file(iterator), new vscode.Position(0, 0));
@@ -296,7 +296,7 @@ class Edk2InfDefinitionProvider implements vscode.DefinitionProvider {
         }
       } else if (table.length === 2 && associate_c_files.length > 0 && keywords.includes(table[0])) {
         //
-        // Jump to C function. 
+        // Jump to C function.
         //
 
         // table[0] = keywords, table[1] = function name;
@@ -366,7 +366,7 @@ class Edk2DscSymbolProvider implements vscode.DocumentSymbolProvider {
         if (m.length && keyword_text.match(/\[[\s\w.,]+\]/g)) {
           let j;
           let keyword_symbol = new vscode.DocumentSymbol(keyword_text, '', vscode.SymbolKind.Class, keyword_line.range, keyword_line.range);
-          
+
           nodes[nodes.length-1].push(keyword_symbol);
           nodes.push(keyword_symbol.children);
 
@@ -397,7 +397,7 @@ class Edk2DscSymbolProvider implements vscode.DocumentSymbolProvider {
             if (element_text[0] === '[') {
               break;
             }
-            
+
             let symbol = new vscode.DocumentSymbol(element_text, '', keywords.get(m)!, element_line.range, element_line.range);
             nodes[nodes.length-1].push(symbol);
           }
@@ -438,7 +438,7 @@ class Edk2DecSymbolProvider implements vscode.DocumentSymbolProvider {
         if (m.length && keyword_text.match(/\[[\s\w.,]+\]/g)) {
           let j;
           let keyword_symbol = new vscode.DocumentSymbol(keyword_text, '', vscode.SymbolKind.Class, keyword_line.range, keyword_line.range);
-          
+
           nodes[nodes.length-1].push(keyword_symbol);
           nodes.push(keyword_symbol.children);
 
@@ -501,7 +501,7 @@ class Edk2InfSymbolProvider implements vscode.DocumentSymbolProvider {
         if (m.length && keyword_text.match(/\[[\s\w.,]+\]/g)) {
           let j;
           let keyword_symbol = new vscode.DocumentSymbol(keyword_text, '', vscode.SymbolKind.Class, keyword_line.range, keyword_line.range);
-          
+
           nodes[nodes.length-1].push(keyword_symbol);
           nodes.push(keyword_symbol.children);
 
@@ -532,7 +532,7 @@ class Edk2InfSymbolProvider implements vscode.DocumentSymbolProvider {
             if (element_text[0] === '[') {
               break;
             }
-            
+
             let symbol = new vscode.DocumentSymbol(element_text, '', keywords.get(m)!, element_line.range, element_line.range);
             nodes[nodes.length-1].push(symbol);
           }
@@ -553,7 +553,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   // Use the console to output diagnostic information (console.log) and errors (console.error)
   // This line of code will only be executed once when your extension is activated
-  console.log('Congratulations, your extension "edk2-vscode" is now active!');
+  console.log('Congratulations, your extension "edk2" is now active!');
 
   /*
   // The command has been defined in the package.json file
