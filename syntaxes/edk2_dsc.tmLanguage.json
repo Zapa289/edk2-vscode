@@ -5,34 +5,20 @@
     { "include": "#library-group"},
     { "include": "#pcd-group"},
     { "include": "#defines-group"},
-    { "include": "#edk2_dsc_color"},
+    { "include": "#components-group"},
+    { "include": "#other-group"},
+    { "include": "#control-keywords"},
+    { "include": "#file-path"},
     { "include": "#comment"}
   ],
   "repository": {
-    "edk2_dsc_color": {
-      "patterns": [
-        {"include": "#string"}, {"include": "#evaluate"}, {"include": "#file-path"},
-        {
-          "name": "keyword.control.edk2_dsc",
-          "match": "!(ifdef|ifndef|if|endif|include|else)"
-        },
-        {
-          "name": "constant.numeric.edk2_dsc",
-          "match": "(?<!\\w)\\.?\\d(?:(?:[0-9a-zA-Z_\\.]|')|(?<=[eEpP])[+-])*"
-        },
-        {
-          "name": "entity.name.type.edk2_dsc",
-          "match": "((?<!\\w)(UINT64|UINT32|UINT16|UINT8|UINTN|BOOLEAN|VOID))(?!\\w)"
-        },
-        {
-          "name": "constant.language.edk2_dsc",
-          "match": "((?<!\\w)TRUE|FALSE|NULL)(?!\\w)"
-        },
-        {
-          "name": "keyword.operator.edk2_dsc",
-          "match": "((?<!\\w)TEST)(?!\\w)"
-        }
-      ]
+    "control-keywords": {
+      "name": "keyword.control.edk2_dsc",
+      "match": "!(ifdef|ifndef|if|endif|include|else)"
+    },
+    "type": {
+      "name": "entity.name.type.edk2_dsc",
+      "match": "((?<!\\w)(UINT64|UINT32|UINT16|UINT8|UINTN|BOOLEAN|VOID))(?!\\w)"
     },
     "comment":{
       "name": "comment.line.number-sign.edk2_dsc",
@@ -42,6 +28,10 @@
     "evaluate": {
       "name": "support.function.builtin.edk2_dsc",
       "match": "\\$\\([a-zA-Z0-9_]+\\)"
+    },
+    "constant": {
+        "name": "constant.numeric.edk2_dsc",
+        "match": "(?<!\\w)\\.?\\d(?:(?:[0-9a-zA-Z_\\.]|')|(?<=[eEpP])[+-])*"
     },
     "guid": {
       "patterns": [
@@ -94,13 +84,10 @@
         "0": {"name" : "support.class.edk2_dsc"}
       },
       "patterns": [
-        {"include": "#control-words"}, {"include": "#pipe"}, {"include": "#comment"},
+        {"include": "#define-keywords"}, {"include": "#pipe"}, {"include": "#comment"}, {"include": "#guid"},
         {
-          "match": "(\\s*DEFINE\\s*)([\\w_]+)\\b",
-          "captures": {
-            "1" : {},
-            "2" : {"name" : "support.variable.edk2_dsc.def"}
-          }
+          "match": "([\\w_]+)\\b",
+          "name" : "support.variable.edk2_dsc.def"
         }
       ]
     },
@@ -122,15 +109,27 @@
     "pcd-group":{
       "name": "edk2_dsc.pcd.group",
       "begin": "\\[Pcd[a-zA-Z0-9., _]+\\]",
-      "end": "^\\s*(?=[\\[|<])",
+      "end": "^\\s*(?=[\\[|<|}])",
       "beginCaptures": {
         "0": {"name" : "support.class.edk2_dsc"}
       },
       "patterns": [
-        {"include": "#pipe"}, { "include": "#pcd-def"}, {"include": "#comment"},
+        {"include": "#pipe"}, { "include": "#pcd-def"}, {"include": "#comment"}, {"include": "#guid"}, {"include": "#bool"}, {"include": "#string"}, {"include": "#constant"},
         {
           "name": "variable.language.edk2_dsc.pcd.guid",
-          "match": "(?<=\\s)\\w+(?=\\.)"
+          "match": "g\\w+Guid"
+        },
+        {
+          "name": "keyword.control.pcd.bracket.edk2_dsc",
+          "match": "[{}]"
+        },
+        {
+          "name": "constant.language.pcd.edk2_dsc",
+          "match": "BS|NV"
+        },
+        {
+          "name": "variable.name.pcd.edk2_dsc",
+          "match": "(?<=|)\\w+\\s*$"
         }
       ]
     },
@@ -139,6 +138,45 @@
       "match": "(?<=\\.)\\w+",
       "patterns": [
         {"include": "#pcd-def"}
+      ]
+    },
+    "components-group":{
+      "name": "edk2_dsc.components.group",
+      "begin": "\\[Components[a-zA-Z0-9., _]+\\]",
+      "end": "^\\s*(?=\\[)",
+      "beginCaptures": {
+        "0": {"name" : "support.class.edk2_dsc"}
+      },
+      "patterns": [
+        {"include": "#file-path"}, {"include": "#comment"},
+        {
+          "name": "component.bracket.edk2_dsc",
+          "begin": "{",
+          "end" : "}",
+          "captures":{
+            "0": { "name" : "keyword.control.bracket.edk2_dsc"}
+          },
+          "patterns": [
+            {"include": "#library-group"},
+            {"include": "#option"}
+          ]
+        }
+      ]
+    },
+    "other-group":{
+      "name": "edk2_dsc.other.group",
+      "begin": "\\[[\\w., ]+\\]",
+      "end": "^\\s*(?=\\[|!)",
+      "beginCaptures": {
+        "0": {"name" : "support.class.edk2_dsc"}
+      },
+      "patterns": [
+        {"include": "#pipe"},
+        {"include": "#constant"},
+        {
+          "name": "variable.name.edk2_dsc",
+          "match": "\\w+"
+        }
       ]
     },
     "file-path":{
@@ -153,9 +191,24 @@
       "name": "keyword.control.edk2_dsc.pipe",
       "match": "\\|"
     },
-    "control-words":{
+    "define-keywords":{
       "name": "keyword.edk2_dsc",
       "match": "((?<!\\w)(DSC_SPECIFICATION|PLATFORM_GUID|PLATFORM_VERSION|PLATFORM_NAME|SKUID_IDENTIFIER|SUPPORTED_ARCHITECTURES|BUILD_TARGETS|OUTPUT_DIRECTORY|FLASH_DEFINITION|BUILD_NUMBER|FIX_LOAD_TOP_MEMORY_ADDRESS|TIME_STAMP_FILE|DEFINE|RFC_LANGUAGES|ISO_LANGUAGES|VPD_TOOL_GUID|PCD_INFO_GENERATION|PREBUILD|POSTBUILD))(?!\\w)"
+    },
+    "bool":  {
+        "name": "constant.language.edk2_dsc",
+        "match": "((?<!\\w)TRUE|FALSE|NULL)(?!\\w)"
+    },
+    "option":{
+      "name": "edk2_dsc.option.group",
+      "begin": "<[\\w., _]+\\>",
+      "end": "^\\s*(?=<|})",
+      "beginCaptures": {
+        "0": {"name" : "support.class.edk2_dsc"}
+      },
+      "patterns": [
+        {"include": "#evaluate"}
+      ]
     }
   },
   "scopeName": "source.edk2_dsc"
