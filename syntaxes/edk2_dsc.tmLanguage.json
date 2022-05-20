@@ -31,7 +31,7 @@
     },
     "constant": {
         "name": "constant.numeric.edk2_dsc",
-        "match": "(?<!\\w)\\.?\\d(?:(?:[0-9a-zA-Z_\\.]|')|(?<=[eEpP])[+-])*"
+        "match": "(?<!\\w)\\.?\\d(?:(?:[\\w.]|')|(?<=[eEpP])[+-])*"
     },
     "guid": {
       "patterns": [

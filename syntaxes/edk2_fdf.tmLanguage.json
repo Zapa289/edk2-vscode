@@ -2,83 +2,101 @@
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
   "name": "source.edk2_fdf",
   "patterns": [
-    {
-      "include": "#edk2_fdf_color"
-    }
+    { "include": "#control-keywords"},
+    { "include": "#file-path"},
+    { "include": "#comment"},
+    { "include": "#fdf-tokens"},
+    { "include": "#other-group"}
   ],
   "repository": {
-    "edk2_fdf_color": {
+    "control-keywords": {
+      "name": "keyword.control.edk2_fdf",
+      "match": "!(ifdef|ifndef|if|endif|include|else)"
+    },
+    "comment":{
+      "name": "comment.line.number-sign.edk2_fdf",
+      "begin": "#|\/\/",
+      "end": "\n"
+    },
+    "constant": {
+      "name": "constant.numeric.edk2_fdf",
+      "match": "(?<!\\w)\\.?\\d(?:(?:[\\w.]|')|(?<=[eEpP])[+-])*"
+    },
+    "guid": {
+      "name": "constant.numeric.edk2.guid",
+      "match": "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+    },
+    "file-path":{
       "patterns": [
         {
-          "//": "TO-DO: Too much specific keywords in FDF, should revisit for finding better way of color syntax."
-        },
-        {
-          "name": "variable.language.edk2_fdf",
-          "match": "((?<!\\w)(FD|BaseAddress|Size|ErasePolarity|BlockSize|NumBlocks|RuleOverride|FV|SET|INF|USE|FILE|DATA))(?!\\w)"
-        },
-        {
-          "name": "variable.language.edk2_fdf",
-          "match": "((?<!\\w)(FvBaseAddress|FvForceRebase|FvAlignment|FileSystemGuid|FvNameGuid|FvUsedSizeEnable|FvNameString))(?!\\w)"
-        },
-        {
-          "name": "variable.language.edk2_fdf",
-          "match": "((?<!\\w)(MEMORY_MAPPED|LOCK_CAP|LOCK_STATUS|WRITE_LOCK_CAP|WRITE_LOCK_STATUS|WRITE_ENABLED_CAP|WRITE_DISABLED_CAP|WRITE_STATUS|STICKY_WRITE|WRITE_POLICY_RELIABLE|READ_LOCK_CAP|READ_LOCK_STATUS|READ_ENABLED_CAP|READ_DISABLED_CAP|READ_STATUS|ERASE_POLARITY))(?!\\w)"
-        },
-        {
-          "name": "support.type.edk2_fdf",
-          "match": "((?<!\\w)(SEC|PEI_CORE|PEIM|FREEFORM|PEI_DXE_COMBO|DRIVER|DXE_CORE|APPLICATION|SMM_CORE|SMM))(?!\\w)"
-        },
-        {
-          "name": "support.type.edk2_fdf",
-          "match": "((?<!\\w)(SECTION|GUIDED|VERSION|UI|FV_IMAGE|COMPAT16|PE32|PIC|TE|RAW|DXE_DEPEX|SMM|DEPEX|PEI_DEPEX))(?!\\w)"
-        },
-        {
-          "name": "support.type.edk2_fdf",
-          "match": "((?<!\\w)(APRIORI|DXE))(?!\\w)"
-        },
-        {
-          "name": "variable.parameter.edk2_fdf",
-          "match": "[\\w/-]+\\.[\\w]+"
-        },
-        {
-          "name": "keyword.control.edk2_fdf",
-          "match": "((?<!\\w)DEFINE)(?!\\w)|!(ifdef|ifndef|if|endif|include|else)"
-        },
-        {
-          "name": "constant.numeric.edk2_fdf",
-          "match": "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
-        },
-        {
-          "name": "constant.numeric.edk2_fdf",
-          "match": "(?<!\\w)\\.?\\d(?:(?:[0-9a-zA-Z_\\.]|')|(?<=[eEpP])[+-])*"
-        },
-        {
-          "name": "constant.language.edk2_fdf",
-          "match": "((?<!\\w)TRUE|FALSE|NULL)(?!\\w)"
-        },
+          "name": "support.variable.edk2_fdf.inf_path",
+          "match": "[-\\w/\\.]+?(\\.(inf|fdf|inc))+"
+        }
+      ]
+    },
+    "string": {
+      "patterns": [
         {
           "name": "string.quoted.double.edk2_fdf",
           "begin": "L\"|\"",
-          "end": "\""
+          "end": "\"",
+          "patterns": [
+            {
+              "include": "#evaluate"
+            }
+          ]
         },
         {
-          "name": "string.quoted.double.edk2_fdf",
-          "match": "\\[[a-zA-Z0-9.]+\\]"
-        },
-        {
-          "name": "string.quoted.double.edk2_fdf",
-          "match": "(?<=<)[a-zA-Z0-9.]+(?=>)"
-        },
-        {
-          "name": "support.function.edk2_fdf",
-          "match": "(?<=\\$\\()[a-zA-Z0-9_]+(?=\\))"
-        },
-        {
-          "name": "comment.line.number-sign.edk2_fdf",
-          "begin": "#|\/\/",
-          "end": "\n"
+          "name": "string.quoted.single.edk2_fdf",
+          "begin": "L'|'",
+          "end": "'",
+          "patterns": [
+            {
+              "include": "#evaluate"
+            }
+          ]
         }
       ]
+    },
+    "fdf-tokens":{
+      "patterns": [
+        {
+          "name": "variable.language.edk2_fdf",
+          "match": "((?<!\\w)(FD|BaseAddress|Size|ErasePolarity|BlockSize|NumBlocks|RuleOverride|FV|SET|INF|USE|FILE|DATA|FvBaseAddress|FvForceRebase|FvAlignment|FileSystemGuid|FvNameGuid|FvUsedSizeEnable|FvNameString|MEMORY_MAPPED|LOCK_CAP|LOCK_STATUS|WRITE_LOCK_CAP|WRITE_LOCK_STATUS|WRITE_ENABLED_CAP|WRITE_DISABLED_CAP|WRITE_STATUS|STICKY_WRITE|WRITE_POLICY_RELIABLE|READ_LOCK_CAP|READ_LOCK_STATUS|READ_ENABLED_CAP|READ_DISABLED_CAP|READ_STATUS|ERASE_POLARITY))(?!\\w)"
+        },
+        {
+          "name": "support.type.edk2_fdf",
+          "match": "((?<!\\w)(SEC|PEI_CORE|PEIM|FREEFORM|PEI_DXE_COMBO|DRIVER|DXE_CORE|APPLICATION|SMM_CORE|SMM|SECTION|GUIDED|VERSION|UI|FV_IMAGE|COMPAT16|PE32|PIC|TE|RAW|DXE_DEPEX|SMM|DEPEX|PEI_DEPEX|APRIORI|DXE))(?!\\w)"
+        }
+      ]
+    },
+    "bool":  {
+      "name": "constant.language.edk2_fdf",
+      "match": "((?<!\\w)TRUE|FALSE|NULL)(?!\\w)"
+    },
+    "other-group":{
+      "name": "edk2_fdf.other.group",
+      "begin": "\\[[\\w., ]+\\]",
+      "end": "^\\s*(?=\\[|!)",
+      "beginCaptures": {
+        "0": {"name" : "support.class.edk2_fdf"}
+      },
+      "patterns": [
+        {"include": "#pipe"},
+        {"include": "#constant"},
+        {"include": "#guid"},
+        {"include": "#fdf-tokens"},
+        {"include": "#file-path"},
+        {"include": "#comment"},
+        {
+          "name": "variable.name.edk2_fdf",
+          "match": "\\w+"
+        }
+      ]
+    },
+    "evaluate": {
+      "name": "support.function.builtin.edk2_fdf",
+      "match": "\\$\\([a-zA-Z0-9_]+\\)"
     }
   },
   "scopeName": "source.edk2_fdf"
