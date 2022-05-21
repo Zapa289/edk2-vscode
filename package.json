@@ -23,41 +23,37 @@
 		"languages": [
 			{
 				"id": "edk2_dsc",
-				"extensions": [
-					".dsc"
-				],
+				"aliases": ["EDK2 DSC"],
+				"extensions": [".dsc"],
 				"configuration": "./confs/edk2_dsc.conf.json"
 			},
 			{
 				"id": "edk2_dec",
-				"extensions": [
-					".dec"
-				],
+				"aliases": ["EDK2 DEC"],
+				"extensions": [".dec"],
 				"configuration": "./confs/edk2_dec.conf.json"
 			},
 			{
 				"id": "edk2_fdf",
-				"extensions": [
-					".fdf"
-				],
+				"aliases": ["EDK2 FDF"],
+				"extensions": [".fdf"],
 				"configuration": "./confs/edk2_fdf.conf.json"
 			},
 			{
 				"id": "edk2_inf",
-				"extensions": [
-					".inf"
-				],
+				"aliases": ["EDK2 INF"],
+				"extensions": [".inf"],
 				"configuration": "./confs/edk2_inf.conf.json"
 			},
 			{
 				"id": "edk2_uni",
-				"extensions": [
-					".uni"
-				],
+				"aliases": ["EDK2 UNI"],
+				"extensions": [".uni"],
 				"configuration": "./confs/edk2_uni.conf.json"
 			},
 			{
 				"id": "edk2_vfr",
+				"aliases": ["EDK2 VFR"],
 				"extensions": [
 					".vfr",
 					".Vfr",
